@@ -153,7 +153,6 @@ dependencies = [
  "rand",
  "ring",
  "rsa",
- "rsa_ext",
  "serde",
  "serde_json",
  "sha2",
@@ -655,6 +654,7 @@ dependencies = [
  "num-iter",
  "num-traits",
  "rand",
+ "serde",
  "smallvec",
  "zeroize",
 ]
@@ -928,28 +928,9 @@ dependencies = [
  "pkcs1",
  "pkcs8",
  "rand_core",
+ "serde",
  "signature 1.6.4",
  "smallvec",
- "subtle",
- "zeroize",
-]
-
-[[package]]
-name = "rsa_ext"
-version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d40046ce8599d7f1359ba9d23eb6e5a7dfcf913c03c62d88078942216e0f7f9d"
-dependencies = [
- "byteorder",
- "digest",
- "num-bigint-dig",
- "num-integer",
- "num-iter",
- "num-traits",
- "pkcs1",
- "pkcs8",
- "rand_core",
- "signature 1.6.4",
  "subtle",
  "zeroize",
 ]
