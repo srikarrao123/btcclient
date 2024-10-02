@@ -1,4 +1,5 @@
 use clap::{builder::Str, Parser};
+use url::Url;
 use core::hash;
 use std::error::Error;
 use futures_util::lock::Mutex;
@@ -247,15 +248,27 @@ async fn client_process(client_id: usize, aggregator_addr: &str, private_key: Rs
     let start_time = Instant::now();
     let mut values: Vec<f64> = Vec::new();
 
+    let binance_ws_url = "wss://stream.binance.com:9443/ws/btcusdt@ticker";
+    let url = Url::parse(&binance_ws_url).expect("Failed to parse the ws url");
+    let (ws_stream, _) = connect_async(url).await.expect("Failed to connect to Binance Websocket"); 
+    
+    println!("Connected to Binance WebSocket");
+
+    let (_, mut read) = ws_stream.split();
+
     // Collect random values for a certain duration
     while start_time.elapsed() < Duration::new(10, 0) {
-        let value = rand::random::<f64>() * 100.0;
-        values.push(value);
+       if let Some(Ok(Message::Text(text))) = read.next().await {
+        let price = extract_usd_btc_price(&text);
+        values.push(price);
+
         println!(
-            "The client {} has provided the value: {:?}",
-            client_id, value
+            "The client {} has recorded BTC price: {:?}",
+            client_id, price
         );
-        sleep(Duration::from_secs(2)); // Simulate a delay between readings
+
+        tokio::time::sleep(Duration::from_secs(2)).await; 
+       }
     }
 
     // Calculate average
@@ -265,7 +278,7 @@ async fn client_process(client_id: usize, aggregator_addr: &str, private_key: Rs
         0.0
     };
     println!(
-        "The client {} provided an average value: {:?}",
+        "The client {} provided an average BTC value: {:?}",
         client_id, average
     );
 
