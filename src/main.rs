@@ -66,107 +66,107 @@ struct SignedMessage {
     pub client_id: usize,
 }
 
-async fn cache_mode(times: u32) {
-    let (socket, _response) = connect_async("wss://stream.binance.com:9443/ws/btcusdt@ticker")
-        .await
-        .expect("Failed to connect to websocket");
-    let mut socket_stream = socket;
-    let mut prices: Vec<f64> = Vec::new();
-    println!("Listening for {} seconds", times);
-    let mut interval: tokio::time::Interval = tokio::time::interval(Duration::from_secs(10));
-    interval.tick().await;
+// async fn cache_mode(times: u32) {
+//     let (socket, _response) = connect_async("wss://stream.binance.com:9443/ws/btcusdt@ticker")
+//         .await
+//         .expect("Failed to connect to websocket");
+//     let mut socket_stream = socket;
+//     let mut prices: Vec<f64> = Vec::new();
+//     println!("Listening for {} seconds", times);
+//     let mut interval: tokio::time::Interval = tokio::time::interval(Duration::from_secs(10));
+//     interval.tick().await;
 
-    loop {
-        tokio::select! {
-          msg = socket_stream.next() => {
-              match msg {
-                  Some(Ok(Message::Text(msg))) => {
-                      let price = extract_usd_btc_price(&msg);
-                      prices.push(price);
-                      println!("The received message is {msg}")
-                  }
-                  Some(Err(e)) => {
-                      eprintln!("The error received for the message is {e}")
-                  }
-                  None => {
-                      println!("The websocket is closed");
-                      break;
-                  }
-                  _ => {
-                    println!("The unwanted message is received");
-                  }
-              }
-          }
+//     loop {
+//         tokio::select! {
+//           msg = socket_stream.next() => {
+//               match msg {
+//                   Some(Ok(Message::Text(msg))) => {
+//                       let price = extract_usd_btc_price(&msg);
+//                       prices.push(price);
+//                       println!("The received message is {msg}")
+//                   }
+//                   Some(Err(e)) => {
+//                       eprintln!("The error received for the message is {e}")
+//                   }
+//                   None => {
+//                       println!("The websocket is closed");
+//                       break;
+//                   }
+//                   _ => {
+//                     println!("The unwanted message is received");
+//                   }
+//               }
+//           }
 
-          _tick = interval.tick() => {
-            println!("Duration is over");
-            break;
-          }
-        }
-    }
+//           _tick = interval.tick() => {
+//             println!("Duration is over");
+//             break;
+//           }
+//         }
+//     }
 
-    // loop {
-    //     tokio::select! {
-    //         msg = socket_stream.next() => {
-    //             match msg {
-    //                 Some(Ok(Message::Text(msg))) => {
-    //                     println!("Received message {msg}");
+//     // loop {
+//     //     tokio::select! {
+//     //         msg = socket_stream.next() => {
+//     //             match msg {
+//     //                 Some(Ok(Message::Text(msg))) => {
+//     //                     println!("Received message {msg}");
 
-    //                     let price = extract_usd_btc_price(&msg);
-    //                     prices.push(price);
-    //                     println!("Received BTC/USD price is {msg}")
-    //                 }
-    //                 Some(Err(e)) => {
-    //                     eprintln!("Error receieving the message {e}")
-    //                 }
-    //                 None => {
-    //                     println!("Websocket closed");
-    //                     break;
-    //                 }
-    //                 _ => {
-    //                     println!("Received Unwanted msg");
-    //                 }
-    //             }
-    //         }
-    //         _tick = interval.tick() => {
-    //             println!("Duration Over");
-    //             break;
-    //         }
-    //     }
-    // }
+//     //                     let price = extract_usd_btc_price(&msg);
+//     //                     prices.push(price);
+//     //                     println!("Received BTC/USD price is {msg}")
+//     //                 }
+//     //                 Some(Err(e)) => {
+//     //                     eprintln!("Error receieving the message {e}")
+//     //                 }
+//     //                 None => {
+//     //                     println!("Websocket closed");
+//     //                     break;
+//     //                 }
+//     //                 _ => {
+//     //                     println!("Received Unwanted msg");
+//     //                 }
+//     //             }
+//     //         }
+//     //         _tick = interval.tick() => {
+//     //             println!("Duration Over");
+//     //             break;
+//     //         }
+//     //     }
+//     // }
 
-    // for _ in 0..times {
-    //     match socket_stream.next().await {
-    //         Some(Ok(Message::Text(msg))) => {
-    //             println!("Received message {msg}");
+//     // for _ in 0..times {
+//     //     match socket_stream.next().await {
+//     //         Some(Ok(Message::Text(msg))) => {
+//     //             println!("Received message {msg}");
 
-    //             let price = extract_usd_btc_price(&msg);
-    //             println!("Received BTC/USD price is {msg}")
-    //         }
-    //         Some(Err(e)) => {
-    //             eprintln!("Error receieving the message {e}")
-    //         }
-    //         None => {6
-    //             println!("Websocket closed");
-    //             break;
-    //         }
-    //         _ => println!("Incorrect usage, Use --mode=cache or --mode=read")
-    //     }
-    //     sleep(Duration::from_secs(5));
-    // }
+//     //             let price = extract_usd_btc_price(&msg);
+//     //             println!("Received BTC/USD price is {msg}")
+//     //         }
+//     //         Some(Err(e)) => {
+//     //             eprintln!("Error receieving the message {e}")
+//     //         }
+//     //         None => {6
+//     //             println!("Websocket closed");
+//     //             break;
+//     //         }
+//     //         _ => println!("Incorrect usage, Use --mode=cache or --mode=read")
+//     //     }
+//     //     sleep(Duration::from_secs(5));
+//     // }
 
-    let average = prices.iter().sum::<f64>() / prices.len() as f64;
-    println!(
-        "The cache complete the average prices of the BTC USD prices is : {}",
-        average
-    );
+//     let average = prices.iter().sum::<f64>() / prices.len() as f64;
+//     println!(
+//         "The cache complete the average prices of the BTC USD prices is : {}",
+//         average
+//     );
 
-    let btc_price_data = BTCPriceData { prices, average };
+//     let btc_price_data = BTCPriceData { prices, average };
 
-    let file = File::create("btc_usd_price.json").expect("Failed to create a file");
-    let writer = BufWriter::new(file);
-    serde_json::to_writer(writer, &btc_price_data).expect("Failed to write the data to the file");
-}
+//     let file = File::create("btc_usd_price.json").expect("Failed to create a file");
+//     let writer = BufWriter::new(file);
+//     serde_json::to_writer(writer, &btc_price_data).expect("Failed to write the data to the file");
+// }
 
 fn extract_usd_btc_price(msg: &str) -> f64 {
     let parsed: serde_json::Value = serde_json::from_str(msg).expect("Failed to parse the message");
@@ -181,17 +181,8 @@ fn extract_usd_btc_price(msg: &str) -> f64 {
 async fn main() {
     let args = Args::parse();
     match args.mode.as_str() {
-        "cache" => cache_mode(args.times).await,
-        "read" => read_mode(),
-        _ => println!("Invalid mode. Use --mode=cache or --mode=read"),
-    }
-
-    // let key = "my secret key";
-    // signed_messages("msg", key);
-
-    // let buffer: usize = 32;
-    // let (tx, rx) = mpsc::channel(buffer);
-    let mut handles = vec![];
+        "cache" => {
+            let mut handles = vec![];
     let mut rng = OsRng;
     let mut public_keys = HashMap::new();
     let mut private_keys: Vec<RsaPrivateKey> = Vec::new();
@@ -214,8 +205,6 @@ async fn main() {
         handles.push(handle);
     }
 
-    // drop(tx);
-
     let aggregator_process = task::spawn(async move { aggregator_process().await });
 
     for handle in handles {
@@ -225,6 +214,11 @@ async fn main() {
     let _ = aggregator_process.await.unwrap();
 
     println!("All processes completed")
+    }
+        "read" => read_mode(),
+        _ => println!("Invalid mode. Use --mode=cache or --mode=read"),
+    }
+
 }
 
 fn read_mode() {
@@ -256,19 +250,13 @@ async fn client_process(client_id: usize, aggregator_addr: &str, private_key: Rs
 
     let (_, mut read) = ws_stream.split();
 
-    // Collect random values for a certain duration
     while start_time.elapsed() < Duration::new(10, 0) {
-       if let Some(Ok(Message::Text(text))) = read.next().await {
-        let price = extract_usd_btc_price(&text);
-        values.push(price);
+        if let Some(Ok(Message::Text(text))) = read.next().await {
+            let price = extract_usd_btc_price(&text);
+            values.push(price);
 
-        println!(
-            "The client {} has recorded BTC price: {:?}",
-            client_id, price
-        );
-
-        tokio::time::sleep(Duration::from_secs(2)).await; 
-       }
+            
+        }
     }
 
     // Calculate average
@@ -285,7 +273,7 @@ async fn client_process(client_id: usize, aggregator_addr: &str, private_key: Rs
     let file_name = format!("client_json_{}.json", client_id);
     let client_data = BTCPriceData {
         prices: values.clone(),
-        average: average,
+        average,
     };
 
     let file = File::create(file_name).expect("Failed to create a file");
@@ -312,8 +300,7 @@ async fn client_process(client_id: usize, aggregator_addr: &str, private_key: Rs
         client_id,
     };
 
-
-    // Send the averge to the aggregator via TCP connection
+    // Send the average to the aggregator via TCP connection
     let mut stream = TcpStream::connect(aggregator_addr)
         .await
         .expect("Failed to connect to aggregator via TCP");
@@ -339,7 +326,11 @@ async fn client_process(client_id: usize, aggregator_addr: &str, private_key: Rs
         "Sent message of length {} to the aggregator.",
         message_length.len()
     );
+
+    
 }
+
+
 
 
 
